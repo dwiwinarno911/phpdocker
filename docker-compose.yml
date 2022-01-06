@@ -1,0 +1,70 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: webserver1.0
+    volumes:
+      - "./etc/nginx.conf:/etc/nginx/nginx.conf"
+      - "./etc/nginx:/etc/nginx/conf.d"
+      - "./etc/ssl:/etc/ssl"
+      - "./web:/application"
+      - "./etc/timezone:/etc/timezone:ro"
+    ports:
+      - "${NGINX_PORT}:80"
+      - "${NGINX_SSL_PORT}:443"
+      - "9001:9001"
+    command: /bin/sh -c "nginx -g 'daemon off;'"
+    restart: ${NGINX_RESTART}
+    depends_on:
+      - php5
+      - php70
+
+  curl:
+    image: appropriate/curl
+    command: /bin/sh -c "curl -s http://bigchaindb:9984/ > /dev/null && curl -s http://tendermint:26657/ > /dev/null"
+
+  php5:
+    build: ./containers/php5
+    container_name: php5
+    working_dir: /application
+    restart: ${PHP5_RESTART}
+    volumes:
+      - ./etc/timezone:/etc/timezone:ro
+      - ./web:/application
+      - ./etc/php/php5.ini:/etc/php5/fpm/conf.d/99-overrides.ini
+
+  php70:
+    build: ./containers/php70
+    container_name: php70
+    working_dir: /application
+    restart: ${php70_RESTART}
+    volumes:
+      - ./etc/timezone:/etc/timezone:ro
+      - ./web:/application
+      - ./etc/php/php70.ini:/etc/php70/fpm/conf.d/99-overrides.ini
+
+  mysqldb:
+    image: mysql:5.6
+    container_name: db
+    restart: ${MYSQL_RESTART}
+    env_file:
+      - ".env"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - ./etc/timezone:/etc/timezone:ro
+      - ./data/db/mysql:/var/lib/mysql
+      - ./etc/my.cnf:/etc/mysql/my.cnf
+
+  mail:
+    image: digiplant/fake-smtp
+    container_name: smtp
+    restart: ${MAIL_RESTART}
+    volumes:
+      - ./data/email:/var/mail
+    ports:
+      - "${MAIL_PORT}:25"
