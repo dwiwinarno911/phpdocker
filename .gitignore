@@ -1,4 +1,3 @@
 data
 etc/ssl
-etc/nginx/*.conf
 .env
