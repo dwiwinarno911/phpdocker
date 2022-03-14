@@ -43,6 +43,16 @@ services:
       - ./web:/application
       - ./etc/php/php70.ini:/etc/php70/fpm/conf.d/99-overrides.ini
 
+  php8:
+    build: ./containers/php8
+    container_name: php8
+    working_dir: /application
+    restart: always
+    volumes:
+      - ./etc/timezone:/etc/timezone:ro
+      - ./web:/application
+      - ./etc/php/php8.ini:/etc/php8/fpm/conf.d/99-soverrides.ini
+
   mysqldb:
     image: mysql:5.6
     container_name: db
@@ -68,3 +78,19 @@ services:
       - ./data/email:/var/mail
     ports:
       - "${MAIL_PORT}:25"
+
+
+
+  sf-modular-db:
+    container_name: sf-modular-db
+    image: mysql:8
+    restart: always
+    ports:
+      - "6033:3308"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+networks:
+  default:
+    external:
+      name: localdev
