@@ -19,9 +19,6 @@ services:
       - php5
       - php70
 
-  curl:
-    image: appropriate/curl
-    command: /bin/sh -c "curl -s http://bigchaindb:9984/ > /dev/null && curl -s http://tendermint:26657/ > /dev/null"
 
   php5:
     build: ./containers/php5
@@ -43,15 +40,14 @@ services:
       - ./web:/application
       - ./etc/php/php70.ini:/etc/php70/fpm/conf.d/99-overrides.ini
 
-  php8:
-    build: ./containers/php8
-    container_name: php8
+  sf-modular-php8:
+    container_name: sf-modular-php8
     working_dir: /application
-    restart: always
+    build:
+      context: ./containers/php8
     volumes:
       - ./etc/timezone:/etc/timezone:ro
       - ./web:/application
-      - ./etc/php/php8.ini:/etc/php8/fpm/conf.d/99-soverrides.ini
 
   mysqldb:
     image: mysql:5.6
@@ -80,15 +76,6 @@ services:
       - "${MAIL_PORT}:25"
 
 
-
-  sf-modular-db:
-    container_name: sf-modular-db
-    image: mysql:8
-    restart: always
-    ports:
-      - "6033:3308"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
 
 networks:
   default:
