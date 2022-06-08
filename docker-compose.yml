@@ -40,16 +40,19 @@ services:
       - ./web:/application
       - ./etc/php/php70.ini:/etc/php70/fpm/conf.d/99-overrides.ini
 
-  sf-modular-php8:
-    container_name: sf-modular-php8
+  php8:
+    container_name: php8
     working_dir: /application
+    restart: ${php70_RESTART}
     build:
       context: ./containers/php8
     volumes:
       - ./etc/timezone:/etc/timezone:ro
       - ./web:/application
+      - ./etc/php/php8.ini:/etc/php8/fpm/conf.d/99-overrides.ini
 
-  mysqldb:
+  sf-modular-db:
+    platform: linux/x86_64
     image: mysql:5.6
     container_name: db
     restart: ${MYSQL_RESTART}
@@ -66,6 +69,25 @@ services:
       - ./data/db/mysql:/var/lib/mysql
       - ./etc/my.cnf:/etc/mysql/my.cnf
 
+
+  mysqldb57:
+    image: mysql:5.7
+    container_name: db57
+    restart: ${MYSQL_RESTART}
+    env_file:
+      - ".env"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./etc/timezone:/etc/timezone:ro
+      - ./data/db/mysql57:/var/lib/mysql57
+      - ./etc/my2.cnf:/etc/mysql/my.cnf
+
+
   mail:
     image: digiplant/fake-smtp
     container_name: smtp
@@ -75,9 +97,3 @@ services:
     ports:
       - "${MAIL_PORT}:25"
 
-
-
-networks:
-  default:
-    external:
-      name: localdev
