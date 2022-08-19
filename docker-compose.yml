@@ -38,7 +38,7 @@ services:
     volumes:
       - ./etc/timezone:/etc/timezone:ro
       - ./web:/application
-      - ./etc/php/php70.ini:/etc/php70/fpm/conf.d/99-overrides.ini
+      - ./etc/php/php5.ini:/etc/php70/fpm/conf.d/99-overrides.ini
 
   php8:
     container_name: php8
@@ -49,9 +49,21 @@ services:
     volumes:
       - ./etc/timezone:/etc/timezone:ro
       - ./web:/application
-      - ./etc/php/php8.ini:/etc/php8/fpm/conf.d/99-overrides.ini
+      - ./etc/php/php5.ini:/etc/php8/fpm/conf.d/99-overrides.ini
 
-  sf-modular-db:
+  php74:
+    container_name: php74
+    working_dir: /application
+    restart: ${php70_RESTART}
+    build:
+      context: ./containers/php74
+    volumes:
+      - ./etc/timezone:/etc/timezone:ro
+      - ./web:/application
+      - ./etc/php/php5.ini:/etc/php74/fpm/conf.d/99-overrides.ini
+
+  
+  db:
     platform: linux/x86_64
     image: mysql:5.6
     container_name: db
@@ -86,7 +98,6 @@ services:
       - ./etc/timezone:/etc/timezone:ro
       - ./data/db/mysql57:/var/lib/mysql57
       - ./etc/my.cnf:/etc/mysql/my.cnf
-
 
   mail:
     image: digiplant/fake-smtp
