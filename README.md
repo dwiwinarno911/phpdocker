@@ -37,25 +37,25 @@ You can use by change this pass on vhost
 #### Connect to database
 To connect database on this docker you can use this config on yout app
 1. MySQL 5.6 
-	host     = db
-	username = root
-	password = password
-	port     = 3306
+	- host     = db
+	- username = root
+	- password = password
+	- port     = 3306
 2. MySQL 5.7
-	host     = db
-	username = root
-	password = password 
-	port     = 3306
+	- host     = db
+	- username = root
+	- password = password 
+	- port     = 3306
 
 Also you can connect this connection via SQL Yog or Another sql management app via 
 
 1. MySQL 5.6 
-	host     = localhost
-	username = root
-	password = password
-	port     = 3306
+	- host     = localhost
+	- username = root
+	- password = password
+	- port     = 3306
 2. MySQL 5.7
-	host     = localhost
-	username = root
-	password = password 
-	port     = 3307
+	- host     = localhost
+	- username = root
+	- password = password 
+	- port     = 3307
