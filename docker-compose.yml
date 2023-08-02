@@ -62,27 +62,7 @@ services:
       - ./web:/application
       - ./etc/php/php5.ini:/etc/php74/fpm/conf.d/99-overrides.ini
 
-  
-  db:
-    platform: linux/x86_64
-    image: mysql:5.6
-    container_name: db
-    restart: ${MYSQL_RESTART}
-    env_file:
-      - ".env"
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    ports:
-      - "${MYSQL_PORT}:3306"
-    volumes:
-      - ./etc/timezone:/etc/timezone:ro
-      - ./data/db/mysql:/var/lib/mysql
-      - ./etc/my.cnf:/etc/mysql/my.cnf
-
-
-  mysqldb57:
+  db57:
     image: mysql:5.7
     container_name: db57
     restart: ${MYSQL_RESTART}
@@ -98,6 +78,25 @@ services:
       - ./etc/timezone:/etc/timezone:ro
       - ./data/db/mysql57:/var/lib/mysql57
       - ./etc/my.cnf:/etc/mysql/my.cnf
+
+
+  mysql8:
+        image: 'mysql:8.0'
+        command: mysqld --default-authentication-plugin=mysql_native_password
+        container_name: db58
+        restart: ${MYSQL_RESTART}
+        env_file:
+          - ".env"
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_USER=dev
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        ports:
+            - '3308:3306'
+        volumes:
+          - ./etc/timezone:/etc/timezone:ro
+          - ./data/db/mysql8
+          - ./etc/my.cnf:/etc/mysql/my.cnf
 
   mail:
     image: digiplant/fake-smtp
